@@ -61,7 +61,18 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				nhile: {
+					pink: 'hsl(var(--nhile-pink))',
+					'pink-deep': 'hsl(var(--nhile-pink-deep))',
+					orange: 'hsl(var(--nhile-orange))',
+					'orange-light': 'hsl(var(--nhile-orange-light))',
+					gray: 'hsl(var(--nhile-gray))',
+					'gray-text': 'hsl(var(--nhile-gray-text))'
 				}
+			},
+			fontFamily: {
+				vietnam: ['Be Vietnam Pro', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

@@ -38,20 +38,33 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
+    /* NhiLe Brand Colors */
+    --nhile-pink: 349 100% 88%;
+    --nhile-pink-deep: 341 100% 78%;
+    --nhile-orange: 15 100% 66%;
+    --nhile-orange-light: 32 100% 72%;
+    --nhile-gray: 210 15% 95%;
+    --nhile-gray-text: 213 18% 47%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--nhile-pink)), hsl(var(--nhile-pink-deep)));
+    --gradient-button: linear-gradient(90deg, hsl(var(--nhile-orange)), hsl(var(--nhile-orange-light)));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--nhile-gray)), hsl(var(--background)));
+
+    /* Shadows */
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--nhile-pink) / 0.3);
+    --shadow-button: 0 10px 20px rgba(0,0,0,0.1);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -100,6 +113,22 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-vietnam;
+  }
+}
+
+@layer components {
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  .gradient-button {
+    background: var(--gradient-button);
+    transition: var(--transition-smooth);
+  }
+  
+  .gradient-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-button);
   }
 }
