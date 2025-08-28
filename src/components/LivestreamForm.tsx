@@ -13,26 +13,50 @@ const LivestreamForm = () => {
   const [consentError, setConsentError] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.consent) {
-      setConsentError(true);
-      return;
-    } else {
-      setConsentError(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!formData.consent) {
+    setConsentError(true);
+    return;
+  } else {
+    setConsentError(false);
+  }
+
+  try {
+    const response = await fetch("/api/submit-livestream", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        question: formData.question,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "Gửi thất bại");
     }
 
-    // TODO: Send this data to your backend/Google Sheets
-    console.log('Livestream Question Data:', formData);
-    
     toast({
       title: "Đã gửi câu hỏi thành công! ✅",
-      description: "Cảm ơn bạn rất nhiều! Nhi sẽ xem qua và chọn những câu hỏi hay nhất cho buổi livestream sắp tới.",
+      description: "Cảm ơn bạn rất nhiều! Nhi sẽ xem qua và chọn những câu hỏi hay nhất.",
     });
 
     setIsSubmitted(true);
-  };
+  } catch (error: any) {
+    toast({
+      title: "Lỗi gửi dữ liệu",
+      description: error.message || "Vui lòng thử lại sau.",
+      variant: "destructive",
+    });
+  }
+};
 
   if (isSubmitted) {
     return (
