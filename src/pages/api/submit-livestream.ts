@@ -1,8 +1,8 @@
 // src/pages/api/submit-livestream.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const BOT_TOKEN = process.env.VITE_TELEGRAM_BOT_TOKEN;
+const CHAT_ID = process.env.VITE_TELEGRAM_CHAT_ID;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
