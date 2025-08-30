@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { sendQuestionToTelegram } from "@/lib/telegramService"; // Thêm import này
 
 const LivestreamForm = () => {
   const [formData, setFormData] = useState({
@@ -14,78 +15,43 @@ const LivestreamForm = () => {
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!formData.consent) {
-    setConsentError(true);
-    return;
-  } else {
-    setConsentError(false);
-  }
-
-  // Lấy token và chat_id từ .env
-  const token = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
-  const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
-
-  if (!token || !chatId) {
-    console.error("Missing Telegram Bot Token or Chat ID in environment variables");
-    toast({
-      title: "Lỗi cấu hình",
-      description: "Không thể gửi câu hỏi do thiếu thông tin Telegram. Vui lòng kiểm tra lại.",
-      variant: "destructive",
-    });
-    return;
-  }
-
-  // Tạo nội dung tin nhắn
-  const message = `
-📩 <b>CÂU HỎI LIVESTREAM MỚI</b>
-    
-👤 <b>Tên:</b> ${formData.name}
-📧 <b>Email:</b> ${formData.email}
-📱 <b>SĐT:</b> ${formData.phone}
-💬 <b>Câu hỏi:</b> 
-${formData.question}
-
-✅ <i>Đồng ý nhận thông tin</i>
-📅 ${new Date().toLocaleString("vi-VN")}
-  `.trim();
-
-  try {
-    const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: message,
-        parse_mode: "HTML", // Để in đậm bằng <b>, <i>
-      }),
-    });
-
-    const result = await response.json();
-
-    if (!result.ok) {
-      throw new Error(result.description);
+    if (!formData.consent) {
+      setConsentError(true);
+      return;
+    } else {
+      setConsentError(false);
     }
 
-    // Gửi thành công
-    toast({
-      title: "Đã gửi câu hỏi thành công! ✅",
-      description: "Cảm ơn bạn rất nhiều! Nhi sẽ xem qua và chọn những câu hỏi hay nhất cho buổi livestream sắp tới.",
-    });
+    try {
+      // Gọi service Telegram
+      const result = await sendQuestionToTelegram({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        question: formData.question
+      });
 
-    setIsSubmitted(true);
-  } catch (error) {
-    console.error("Lỗi gửi Telegram:", error);
-    toast({
-      title: "Gửi thất bại ❌",
-      description: "Có lỗi xảy ra khi gửi câu hỏi. Vui lòng thử lại sau.",
-      variant: "destructive",
-    });
-  }
-};
+      if (result.success) {
+        // Gửi thành công
+        toast({
+          title: "Đã gửi câu hỏi thành công! ✅",
+          description: "Cảm ơn bạn rất nhiều! Nhi sẽ xem qua và chọn những câu hỏi hay nhất cho buổi livestream sắp tới.",
+        });
+        setIsSubmitted(true);
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error("Lỗi gửi Telegram:", error);
+      toast({
+        title: "Gửi thất bại ❌",
+        description: error instanceof Error ? error.message : "Có lỗi xảy ra khi gửi câu hỏi. Vui lòng thử lại sau.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isSubmitted) {
     return (
